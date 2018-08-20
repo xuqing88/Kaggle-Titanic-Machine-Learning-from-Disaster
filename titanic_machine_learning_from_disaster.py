@@ -290,15 +290,17 @@ data_submit = pd.read_csv('test.csv')
 # print(data_original.dtypes)
 # Split the original data into three data set: Train-data_train, Test-data_test, Cross Valiadation- data_cv
 #data_for_train,data_cv = train_test_split(data_original,test_size=cv_data_ratio)
-data_train, data_test = train_test_split(data_original,test_size=0)
-[X_train, Y_train]= data_preprocess(data_train,Train_flag)
-#[X_test, Y_test] = data_preprocess(data_test,Test_flag)
+data_train, data_test = train_test_split(data_original, test_size=0)
+[X_train, Y_train]= data_preprocess(data_train, Train_flag)
+#[X_test, Y_test] = data_preprocess(data_test, Test_flag)
 [X_submit,Y_empty] = data_preprocess(data_submit, Test_flag)
 #[X_cv,Y_cv] = data_preprocess(data_cv,Cross_validataion_flag)
 
 
 # Part2 : Model Selection
 # Random forest
+
+# RF-Grid Search
 # print('Training the data with the Random forest.........')
 # num_estimators = [10,20,30]
 # max_features = ['auto','log2']
@@ -314,6 +316,7 @@ data_train, data_test = train_test_split(data_original,test_size=0)
 # test_score = grid_search.best_estimator_.score(X_test,Y_test)
 # print("RF Score:  Training Accuracy = {}, Test Accuracy = {}".format(grid_search.best_score_, test_score))
 
+# RF - Manual Search
 # train_score_result = []
 # test_score_result = []
 # for i in np.arange(start=1,stop=15,step=1):
@@ -330,6 +333,7 @@ data_train, data_test = train_test_split(data_original,test_size=0)
 # ax.plot(np.arange(start=1,stop=15,step=1).reshape(-1,1),test_score_result, linestyle = ':', color = 'yellow',label = 'Test')
 # fig.show()
 
+# RF - Final Training
 rfclf = RandomForestClassifier(n_estimators=14, max_features=12,max_depth=6)
 rfclf.fit(X_train,Y_train)
 print(rfclf.feature_importances_)
@@ -338,6 +342,7 @@ train_score = rfclf.score(X_train,Y_train)
 print("Random Forest Score:  Training Accuracy = {}".format(train_score))
 Y_submit = rfclf.predict(X_submit)
 prediction = pd.DataFrame(Y_submit,columns=['Survived']).to_csv('prediction.csv')
+
 # Decision Tree
 # dtclf = DecisionTreeClassifier()
 # dtclf.fit(X_train,Y_train)
@@ -347,6 +352,8 @@ prediction = pd.DataFrame(Y_submit,columns=['Survived']).to_csv('prediction.csv'
 
 
 # SVM
+
+#  SVM Grid Search
 # print("Training the data with SVM model..........")
 # Cs = [0.001]
 # kernels = ['rbf','sigmoid']
@@ -368,6 +375,39 @@ prediction = pd.DataFrame(Y_submit,columns=['Survived']).to_csv('prediction.csv'
 # train_score = svmclf.score(X_train,Y_train)
 # test_score = svmclf.score(X_test,Y_test)
 #print("SVM Score:  Training Accuracy = {}, Test Accuracy = {}".format(train_score, test_score))
+
+# SVM - Manual Search
+# train_score_result = []
+# test_score_result = []
+# gamma_range = [0.02,0.04,0.06,0.08, 0.1, 0.12,0.14]
+# #for i in gamma_range:
+# for i in np.arange(start=2,stop=4,step=0.5):
+#     svmclf = SVC(C=i, kernel='rbf', gamma=0.06)
+#     svmclf.fit(X_train,Y_train)
+#     train_score = svmclf.score(X_train, Y_train)
+#     test_score = svmclf.score(X_test, Y_test)
+#     #print("SVM Score:  Training Accuracy = {}, Test Accuracy = {}".format(train_score, test_score))
+#     train_score_result = np.append(train_score_result, train_score)
+#     test_score_result=np.append(test_score_result, test_score)
+# fig = plt.figure()
+# ax=fig.add_subplot(1,1,1)
+# ax.plot(np.arange(start=2, stop=4, step=0.5).reshape(-1,1), train_score_result,linestyle = '--',color = 'green',label = 'Training')
+# ax.plot(np.arange(start=2, stop=4, step=0.5).reshape(-1,1),test_score_result, linestyle = ':', color = 'yellow',label = 'Test')
+# # ax.plot(gamma_range, train_score_result,linestyle = '--',color = 'green',label = 'Training')
+# # ax.plot(gamma_range,test_score_result, linestyle = ':', color = 'yellow',label = 'Test')
+# fig.show()
+
+
+#SVM - Final Training
+# svmclf = SVC(C=2.5, kernel='rbf',gamma = 0.06)
+# svmclf.fit(X_train,Y_train)
+# #print(svmclf.feature_importances_)
+# train_score = svmclf.score(X_train,Y_train)
+# #test_score = rfclf.score(X_test,Y_test)
+# print("Random Forest Score:  Training Accuracy = {}".format(train_score))
+# Y_submit = svmclf.predict(X_submit)
+# prediction = pd.DataFrame(Y_submit, columns=['Survived']).to_csv('SVM_prediction.csv')
+
 
 
 # Neural Network
